@@ -1,0 +1,8 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/Users/abhinavk/Desktop/jaudiotagger-3.0.1.jar",
+        "/Users/abhinavk/Desktop/jlayer-1.0.1.jar",
+        "/Users/abhinavk/Desktop/mp3agic-0.9.0.jar"
+    ]
+}
