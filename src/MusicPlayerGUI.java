@@ -6,6 +6,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class MusicPlayerGUI extends JFrame {
     
@@ -50,6 +51,9 @@ public class MusicPlayerGUI extends JFrame {
 
         // set a default path for file explorer
         jFileChooser.setCurrentDirectory(new File("src/assets/songs"));
+
+        // filter file chooser to only see .mp3 extension
+        jFileChooser.setFileFilter(new FileNameExtensionFilter("MP3", "mp3"));
         
         addGuiComponents();
     }
@@ -110,10 +114,12 @@ public class MusicPlayerGUI extends JFrame {
         loadSong.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jFileChooser.showOpenDialog(MusicPlayerGUI.this);
+                // an int is returned to us to let us know what the user did
+                int result = jFileChooser.showOpenDialog(MusicPlayerGUI.this);
                 File selectedFile = jFileChooser.getSelectedFile();
 
-                if(selectedFile != null) {
+                // checking to see if the user pressed the "open" button
+                if(result == JFileChooser.APPROVE_OPTION && selectedFile != null) {
                     // create a song obj based on selected file
                     Song song = new Song(selectedFile.getPath());
 
@@ -159,6 +165,16 @@ public class MusicPlayerGUI extends JFrame {
         JButton playButton = new JButton(loadImage("src/assets/play.png"));
         playButton.setBorderPainted(false);
         playButton.setBackground(null);
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // toggle on play button and toggle off pause button
+                enablePauseButtonDisablePlayButton();
+
+                // resume the song
+                musicPlayer.playCurrentSong();
+            }
+        });
         playbackBtns.add(playButton);
         
         // pause button
@@ -166,6 +182,16 @@ public class MusicPlayerGUI extends JFrame {
         pauseButton.setBorderPainted(false);
         pauseButton.setBackground(null);
         pauseButton.setVisible(false);
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // toggle off pause button and toggle on play button
+                enablePlayButtonDisablePauseButton();
+
+                // pause the song
+                musicPlayer.pauseSong();
+            }
+        });
         playbackBtns.add(pauseButton);
         
         // next button
