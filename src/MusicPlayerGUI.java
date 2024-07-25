@@ -3,6 +3,7 @@ import java.awt.Font;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.File;
+import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -21,6 +22,7 @@ public class MusicPlayerGUI extends JFrame {
 
     private JLabel songTitle, songArtist;
     private JPanel playbackBtns;
+    private JSlider playbackSlider;
     
     public MusicPlayerGUI() {
         
@@ -46,7 +48,7 @@ public class MusicPlayerGUI extends JFrame {
         // change the frame color
         getContentPane().setBackground(FRAME_COLOR);
 
-        musicPlayer = new MusicPlayer();
+        musicPlayer = new MusicPlayer(this);
         jFileChooser = new JFileChooser();
 
         // set a default path for file explorer
@@ -84,11 +86,38 @@ public class MusicPlayerGUI extends JFrame {
         add(songArtist);
         
         // playback slider
-        JSlider playbackSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
+        playbackSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
         playbackSlider.setBounds(getWidth()/2 - 300/2, 365, 300, 40);
         playbackSlider.setBackground(null);
+        playbackSlider.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // when the user is holding the tick we want to pause the song
+                musicPlayer.pauseSong();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // when the user drops the tick
+                JSlider source = (JSlider) e.getSource();
+
+                // get the frame value from where the user wants to playback to
+                int frame = source.getValue();
+
+                // update the current frame in the music player to this frame
+                musicPlayer.setCurrentFrame(frame);
+
+                // update the current time in milli too
+                musicPlayer.setCurrentTimeInMilli((int) (frame / 1.28 * musicPlayer.getCurrentSong().getFrameRatePerMilliseconds()));
+
+                // resume the song
+                musicPlayer.playCurrentSong();
+
+                // toggle on pause button and toggle off play button
+                enablePauseButtonDisablePlayButton();
+            }
+        });
         add(playbackSlider);
-        
         
         // playback buttons (prev, play, pause, etc.)
         addPlaybackBtns();
@@ -128,6 +157,9 @@ public class MusicPlayerGUI extends JFrame {
 
                     // update song title and artist
                     updateSongTitleAndArtist(song);
+
+                    // update playback slider
+                    updatePlaybackSlider(song);
 
                     // toggle on pause button and toggle off play button
                     enablePauseButtonDisablePlayButton();
@@ -203,10 +235,39 @@ public class MusicPlayerGUI extends JFrame {
         add(playbackBtns);
     }
 
+    // this will be used to update our slider from the music player class
+    public void setPlaybackSliderValue(int frame) {
+        playbackSlider.setValue(frame);
+    }
+
     private void updateSongTitleAndArtist(Song song) {
         songTitle.setText(song.getSongTitle());
         songArtist.setText(song.getSongArtist());
 
+    }
+
+    private void updatePlaybackSlider(Song song) {
+        // update max count for slider
+        playbackSlider.setMaximum(song.getMp3File().getFrameCount());
+
+        // create the song length label
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
+
+        // beginning will be 00:00
+        JLabel labelBeginning = new JLabel("00:00");
+        labelBeginning.setFont(new Font("Dialog", Font.BOLD, 18));
+        labelBeginning.setForeground(TEXT_COLOR);
+
+        // end will vary depending on the song
+        JLabel labelEnd = new JLabel(song.getSongLength());
+        labelEnd.setFont(new Font("Dialog", Font.BOLD, 18));
+        labelEnd.setForeground(TEXT_COLOR);
+
+        labelTable.put(0, labelBeginning);
+        labelTable.put(song.getMp3File().getFrameCount(), labelEnd);
+
+        playbackSlider.setLabelTable(labelTable);
+        playbackSlider.setPaintLabels(true);
     }
 
     private void enablePauseButtonDisablePlayButton() {

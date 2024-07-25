@@ -6,8 +6,17 @@ import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;
 
 public class MusicPlayer extends PlaybackListener {
+    // this will be used to update isPaused more synchronously
+    private static final Object playSignal = new Object();
+    
+    // need reference so that we can update the GUI in this class
+    private MusicPlayerGUI musicPlayerGUI;
+    
     // need to store song details -> create a song class
     private Song currentSong;
+    public Song getCurrentSong() {
+        return currentSong;
+    }
     
     // use JLayer lib to create an AdvancedPlayer obj to handle playing the music
     private AdvancedPlayer advancedPlayer;
@@ -17,10 +26,19 @@ public class MusicPlayer extends PlaybackListener {
     
     // stores the last frame when the playback is finished (used for pausing and resuming)
     private int currentFrame;
+    public void setCurrentFrame(int frame) {
+        currentFrame = frame;
+    }
+    
+    // track how many milliseconds has passed since playing the song (used for updating the slider)
+    private int currentTimeInMilli;
+    public void setCurrentTimeInMilli(int timeInMilli) {
+        currentTimeInMilli = timeInMilli;
+    }
     
     // constructor
-    public MusicPlayer() {
-        
+    public MusicPlayer(MusicPlayerGUI musicPlayerGUI) {
+        this.musicPlayerGUI = musicPlayerGUI;
     }
     
     public void loadSong(Song song) {
@@ -52,8 +70,8 @@ public class MusicPlayer extends PlaybackListener {
     
     public void playCurrentSong() {
         if(currentSong == null)
-            return;
-
+        return;
+        
         try{
             //read mp3 audio data
             FileInputStream fileInputStream = new FileInputStream(currentSong.getFilePath());
@@ -65,6 +83,9 @@ public class MusicPlayer extends PlaybackListener {
             
             // start music
             startMusicThread();
+            
+            // start playback slider thread
+            startPlaybackSliderThread();
             
         }catch(Exception e){
             e.printStackTrace();
@@ -78,6 +99,14 @@ public class MusicPlayer extends PlaybackListener {
             public void run() {
                 try{
                     if(isPaused) {
+                        synchronized(playSignal) {
+                            // update flag
+                            isPaused = false;
+                            
+                            // notify the other thread to continue
+                            playSignal.notify();
+                        }
+                        
                         // resume music from last frame
                         advancedPlayer.play(currentFrame, Integer.MAX_VALUE);
                     }else{
@@ -86,6 +115,44 @@ public class MusicPlayer extends PlaybackListener {
                     }
                 }catch(Exception e){
                     e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+    
+    // create a thread that will handle updating the slider
+    private void startPlaybackSliderThread() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(isPaused) {
+                    try{
+                        // wait until it gets notified by other thread to continue
+                        // makes sure that isPaused bool flag updates to false before continuing
+                        synchronized(playSignal){
+                            playSignal.wait();
+                        }
+                    }catch(Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                while(!isPaused) {
+                    try{
+                        // increment current time milli
+                        currentTimeInMilli++;
+                        
+                        // calculate into frame value (1.28 works for my pc, may need a diff multiplier for diff pcs)
+                        int calculatedFrame = (int) ((double) currentTimeInMilli * 1.28 * currentSong.getFrameRatePerMilliseconds());
+                        
+                        // update the GUI
+                        musicPlayerGUI.setPlaybackSliderValue(calculatedFrame);
+                        
+                        // mimic 1 millisecond using thread.sleep
+                        Thread.sleep(1);
+                    }catch(Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }).start();
