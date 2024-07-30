@@ -181,6 +181,7 @@ public class MusicPlayerGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // load music playlist dialog
+                new MusicPlaylistDialog(MusicPlayerGUI.this).setVisible(true);
             }
         });
         playlistMenu.add(createPlaylist);
