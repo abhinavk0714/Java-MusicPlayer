@@ -1,18 +1,21 @@
-## Getting Started
+In this project, I built an MP3 Music Player App in Java!
+## Technologies & Frameworks
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+- **JDK 18+** - Java Version
+- **Mp3Magic** - A Java library for reading mp3 files and manipulating mp3 file ID3 tags
+- **JLayer** - MP3 decoder/player/converter library for the Java™ platform.
+- **JAudioTagger** - A Java library for editing tag information in audio files. Most existing solutions are not Java-based, inhibiting the use of Java applications with digital files.
 
-## Folder Structure
+## Features
 
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+- 🎶 Play an MP3 File (Song)
+- 🎙 Display Title of Song
+- 👤 Display Artist of Song
+- ⏳ Display the Length of the Song
+- ⏪ Playback Functionality
+- ⏸ Pause Song
+- ▶ Resume Song
+- ⏭ Go to the next Song in a playlist
+- ⏮ Go to the previous Song in a playlist
+- 📃 Create a Custom Playlist
+- 🔃 Load a Custom Playlist
