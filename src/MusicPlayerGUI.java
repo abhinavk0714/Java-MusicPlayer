@@ -2,7 +2,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.awt.*;
 import java.io.File;
 import java.util.Hashtable;
 
@@ -10,11 +9,15 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * Music Player GUI Class
+ * @author abhinavk
+ */
 public class MusicPlayerGUI extends JFrame {
     
     // color config
-    public static final Color FRAME_COLOR = Color.BLACK;
-    public static final Color TEXT_COLOR = Color.WHITE;
+    public static final Color FRAME_COLOR = Color.LIGHT_GRAY;
+    public static final Color TEXT_COLOR = Color.BLACK;
     
     private MusicPlayer musicPlayer;
     
@@ -25,6 +28,9 @@ public class MusicPlayerGUI extends JFrame {
     private JPanel playbackBtns;
     private JSlider playbackSlider;
     
+    /**
+     * Constructor to set up the GUI
+     */
     public MusicPlayerGUI() {
         
         // calls JFrame constructor to configure out GUI and set title header to "Music Player"
@@ -61,6 +67,9 @@ public class MusicPlayerGUI extends JFrame {
         addGuiComponents();
     }
     
+    /**
+     * Method that adds of the GUI components
+     */
     private void addGuiComponents() {
         // add toolbar
         addToolbar();
@@ -126,6 +135,9 @@ public class MusicPlayerGUI extends JFrame {
         addPlaybackBtns();
     }
     
+    /**
+     * Method that adds the toolbar at the top of the music player
+     */
     private void addToolbar() {
         JToolBar toolBar = new JToolBar();
         toolBar.setBounds(0, 0, getWidth(), 20);
@@ -211,6 +223,9 @@ public class MusicPlayerGUI extends JFrame {
         add(toolBar);
     }
     
+    /**
+     * Method that adds all of the playback buttons
+     */
     private void addPlaybackBtns() {
         playbackBtns = new JPanel();
         playbackBtns.setBounds(0, 435, getWidth() - 10, 80);
@@ -278,17 +293,28 @@ public class MusicPlayerGUI extends JFrame {
         add(playbackBtns);
     }
     
-    // this will be used to update our slider from the music player class
+    /**
+     * Method used to update the slider from the music player class
+     * @param frame the frame of the song
+     */
     public void setPlaybackSliderValue(int frame) {
         playbackSlider.setValue(frame);
     }
     
+    /**
+     * Method used to update a song's title and artist
+     * @param song the song
+     */
     public void updateSongTitleAndArtist(Song song) {
         songTitle.setText(song.getSongTitle());
         songArtist.setText(song.getSongArtist());
         
     }
     
+    /**
+     * Method used to update the playback slider
+     * @param song the song
+     */
     public void updatePlaybackSlider(Song song) {
         // update max count for slider
         playbackSlider.setMaximum(song.getMp3File().getFrameCount());
@@ -313,6 +339,9 @@ public class MusicPlayerGUI extends JFrame {
         playbackSlider.setPaintLabels(true);
     }
     
+    /**
+     * Method used to enable the pause button and disable the play button
+     */
     public void enablePauseButtonDisablePlayButton() {
         // retrive reference to play button from playbackBtns panel
         JButton playButton = (JButton) playbackBtns.getComponent(1);
@@ -327,6 +356,9 @@ public class MusicPlayerGUI extends JFrame {
         pauseButton.setEnabled(true);
     }
     
+    /**
+     * Method used to enable the play button and disable the pause button
+     */
     public void enablePlayButtonDisablePauseButton() {
         // retrive reference to play button from playbackBtns panel
         JButton playButton = (JButton) playbackBtns.getComponent(1);
@@ -341,6 +373,10 @@ public class MusicPlayerGUI extends JFrame {
         pauseButton.setEnabled(false);
     }
     
+    /**
+     * Method used to load an image
+     * @param imagePath the path of where the image is stored
+     */
     private ImageIcon loadImage(String imagePath) {
         try{
             // read the image file from the given path

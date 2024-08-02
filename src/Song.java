@@ -1,14 +1,13 @@
 import java.io.File;
-import java.lang.reflect.Field;
-
 import org.jaudiotagger.audio.*;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
 import com.mpatric.mp3agic.Mp3File;
 
-/*
- * Class used to describe a song
+/**
+ * Song Class
+ * @author abhinavk
  */
 public class Song {
     private String songTitle;
@@ -18,6 +17,10 @@ public class Song {
     private Mp3File mp3File;
     private double framRatePerMilliseconds;
 
+    /**
+     * Constructor that initializes a song from the directory
+     * @param filepath of the song
+     */
     public Song(String filePath) {
         this.filePath = filePath;
         try {
@@ -43,6 +46,10 @@ public class Song {
         }
     }
 
+    /**
+     * Method to convert a song's length into a formatted time
+     * @return the formatted time
+     */
     private String convertToSongLengthFormat() {
         long minutes = mp3File.getLengthInSeconds() / 60;
         long seconds = mp3File.getLengthInSeconds() % 60;
@@ -51,27 +58,50 @@ public class Song {
         return formattedTime;
     }
 
-    // getters
+    /**
+     * Song title getter
+     * @return the song's title
+     */
     public String getSongTitle() {
         return songTitle;
     }
 
+    /**
+     * Song artist getter
+     * @return the song's artist
+     */
     public String getSongArtist() {
         return songArtist;
     }
 
+    /**
+     * Song length getter
+     * @return the song's length
+     */
     public String getSongLength() {
         return songLength;
     }
 
+    /**
+     * Song file path getter
+     * @return the song's file path
+     */
     public String getFilePath() {
         return filePath;
     }
     
+    /**
+     * MP3 file getter
+     * @return the mp3 file
+     */
     public Mp3File getMp3File() {
         return mp3File;
     }
 
+    /**
+     * Frame rate per milliseconds getter
+     * @return the frame rate per milli
+     */
     public double getFrameRatePerMilliseconds() {
         return framRatePerMilliseconds;
     }

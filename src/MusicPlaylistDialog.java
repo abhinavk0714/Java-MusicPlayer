@@ -9,12 +9,20 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * Music Playlist Dialog Class
+ * @author abhinavk
+ */
 public class MusicPlaylistDialog extends JDialog {
     private MusicPlayerGUI musicPlayerGUI;
     
     // store all of the paths to be written to a txt file (when loading a playlist)
     private ArrayList<String> songPaths;
     
+    /**
+     * Constructor that sets up the playlist dialog
+     * @param musicPlayerGUI the musicplayer gui
+     */
     public MusicPlaylistDialog(MusicPlayerGUI musicPlayerGUI) {
         this.musicPlayerGUI = musicPlayerGUI;
         songPaths = new ArrayList<>();
@@ -31,6 +39,9 @@ public class MusicPlaylistDialog extends JDialog {
         addDialogComponents();
     }
     
+    /**
+     * Method that adds all of the dialog components to the gui
+     */
     private void addDialogComponents() {
         // container to hold each song path
         JPanel songContainer = new JPanel();
